@@ -7,13 +7,13 @@ import { PasswordCreate, PasswordCompare } from './utils/password';
 const port = 9002;
 
 const corsOptions = {
-  origin: 'https://api-liloo.wedeploy.io',
+  origin: 'http://localhost:9000',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors());
+// app.use(cors());
 app.use('/', router);
 
 app.listen(port, () => {
