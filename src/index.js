@@ -36,8 +36,8 @@ router.get('/cliente/:id', (req, res) => {
 })
 
 router.post('/cadastro', (req, res) => {
-  const query = `insert into tb_users (nome, sobrenome, email, senha, ddd, avaliacaoProfissional, IDcategoriaUser, IDservicoUser, oauth_provider, oauth_uid, picture, link, created, modified, locale, gender, codCliente, codClienteEncript) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  const arrayValues = [req.body.nome, req.body.sobreNome, req.body.email, PasswordCreate(req.body.senha, 10), '', '', 0, 0, '', '', '', '', '', '', '', '', 0, 0]
+  const query = `insert into tb_users (nome, sobrenome, email, senha, ddd, avaliacaoProfissional, IDcategoriaUser, IDservicoUser, oauth_provider, oauth_uid, picture, link, created, modified, locale, gender, codCliente, codClienteEncript,tpCliente) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
+  const arrayValues = [req.body.nome, req.body.sobreNome, req.body.email, PasswordCreate(req.body.senha, 10), '', '', 0, 0, '', '', '', '', '', '', '', '', 0, 0,req.tipoCliente]
   
   execquery(query, arrayValues, (queryResponse) =>  {
     if(queryResponse.result.codeResult === 0) {
@@ -53,7 +53,7 @@ router.post('/cadastro', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
-  const query = 'SELECT senha FROM tb_users WHERE email = ?';
+  const query = 'select nome,senha,tpCliente FROM tb_users WHERE email = ?';
   const arrayValues = [req.body.email]
 
   execquery(query, arrayValues, (queryResponse) =>  {
