@@ -3,8 +3,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { execquery } from './queries';
 import { PasswordCreate, PasswordCompare, Encrypt, Decrypt } from './utils/password';
-import { SetTimeEncrypt,IsValidTime } from './utils/tempoAcesso'
-import { isBoolean } from 'util';
+import { SetTimeEncrypt, IsValidTime } from './utils/tempoAcesso'
 
 
 const port = process.env.PORT || 9002;
@@ -34,13 +33,12 @@ router.get('/clientes', cors(corsOptions), (req, res) => {
 
 router.get('/cliente/:id', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
-  console.log("req.body", req);
   execquery('SELECT * FROM tb_users WHERE IDuser=?', res, [req.params.id]);
 });
 
 router.post('/cadastro', (req, res) => {
   const query = `insert into tb_users (nome, sobrenome, email, senha, ddd, avaliacaoProfissional, IDcategoriaUser, IDservicoUser, oauth_provider, oauth_uid, picture, link, created, modified, locale, gender, codCliente, codClienteEncript,tpCliente) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
-  const arrayValues = [req.body.nome, req.body.sobreNome, req.body.email, PasswordCreate(req.body.senha, 10), '', '', 0, 0, '', '', '', '', '', '', '', '', 0, 0,req.tipoCliente]
+  const arrayValues = [req.body.nome, req.body.sobreNome, req.body.email, PasswordCreate(req.body.senha, 10), '', '', 0, 0, '', '', '', '', '', '', '', '', 0, 0,req.body.tipoCliente]
   
   execquery(query, arrayValues, (queryResponse) =>  {
     if(queryResponse.result.codeResult === 0) {
@@ -101,16 +99,14 @@ router.get('/getregisterdetails',(req,res) =>{
 });
 
 router.post('/login', (req, res) => {
- 
   const query = 'select IDuser, nome,senha,tpCliente,status from tb_users WHERE email = ?';
   
 
   const arrayValues = [req.body.email];
  
   execquery(query, arrayValues, (queryResponse) =>  {
-    
+    console.log(queryResponse);
     let confirmPassword = PasswordCompare(req.body.senha, queryResponse.result.data[0].senha);
-
     if(confirmPassword) {
       const successPassword = Object.assign(queryResponse.result, {data: {
                                                                       nome: queryResponse.result.data[0].nome,
