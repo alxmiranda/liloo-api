@@ -2,7 +2,7 @@ import { app, router} from './app';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { execquery } from './queries';
-import { PasswordCreate, PasswordCompare, Encrypt } from './utils/password';
+import { PasswordCreate, PasswordCompare, Encrypt, Decrypt } from './utils/password';
 import { SetTimeEncrypt,IsValidTime } from './utils/tempoAcesso'
 import { isBoolean } from 'util';
 
@@ -61,11 +61,49 @@ router.get('/validkey/:id',(req,res)=>{
 
 });
 
+router.get('/getregisterdetails',(req,res) =>{
+
+  const headerParams = [req.headers];
+
+  if(!IsValidTime(headerParams['accessKey'] )){
+    return res.status(401).json({error: 'invalid access-key'}) 
+  }
+
+  if(headerParams['perfil'] == undefined){
+    return res.status(401).json({error: 'perfil needed'}) 
+  }
+
+  const query = `select nome, tpCliente,status, email,ddd,telefone  from tb_users WHERE IdUser =${Decrypt(headerParams['perfil'])}`;
+
+  execquery(query, null, (dataRetrieved) =>  {
+    
+    if(!queryResponse.result){
+      
+      queryResponse.con.end();
+      return res.status(404).json({error: 'Not record found'}) 
+
+    }
+
+      const dataResponse = Object.assign(queryResponse.result, {data: {
+                                                                      nome: dataRetrieved.result.data[0].nome,
+                                                                      perfil:dataRetrieved.result.data[0].tpCliente ,
+                                                                      situacao: dataRetrieved.result.data[0].status == 1 ? "ATIVO" : "INATIVO",
+                                                                      email: dataRetrieved.result.data[0].email,
+                                                                      ddd : dataRetrieved.result.data[0].ddd,
+                                                                      telefone: dataRetrieved.result.data[0].telefone}
+                                                                      
+      });
+      res.json(dataResponse)    
+      
+  });
+
+
+});
+
 router.post('/login', (req, res) => {
  
   const query = 'select IDuser, nome,senha,tpCliente,status from tb_users WHERE email = ?';
   
-  //console.log(req.headers['algumacoisa']); vou usar em breve
 
   const arrayValues = [req.body.email];
  
