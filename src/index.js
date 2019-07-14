@@ -59,7 +59,38 @@ router.get('/validkey/:id',(req,res)=>{
 
 });
 
-router.get('/getregisterdetails',(req,res) =>{
+router.post('registerdetails',(req,res)=>{
+  const headerParams = [req.headers];
+
+  if(!IsValidTime(headerParams['accessKey'] )){
+    return res.status(401).json({error: 'invalid access-key'}) 
+  }
+
+  if(headerParams['perfil'] == undefined){
+    return res.status(401).json({error: 'perfil needed'}) 
+  }
+
+  const query = `update tb_users SET nome = ?,email=?,ddd=?,telefone=?,tpCliente =? WHERE IdUser =?`;
+  const arrayValues = [req.body.nome, req.body.email, req.body.ddd, req.body.telefone, req.body.perfil, Decrypt(headerParams['perfil']) ]
+  
+  execquery(query, arrayValues, (queryResponse) =>  {
+    if(queryResponse.result.codeResult === 0) {
+      const success = Object.assign(queryResponse.result, {data: null});
+      res.json(success);
+    } else {
+      const error = Object.assign(queryResponse.result, {codeRestult: 1, errorMsg: 'Dados atualizados com sucesso!', data: null});
+      res.json(error);
+    }
+    if(!queryResponse.result)
+      queryResponse.con.end();
+  });
+
+
+
+
+});
+
+router.get('/registerdetails',(req,res) =>{
 
   const headerParams = [req.headers];
 
