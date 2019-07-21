@@ -84,28 +84,24 @@ router.post('registerdetails',(req,res)=>{
     if(!queryResponse.result)
       queryResponse.con.end();
   });
-
-
-
-
 });
 
-router.get('/registerdetails',(req,res) =>{
+router.get('/registerdetails', (req,res) => {
 
-  const headerParams = [req.headers];
+  const headerParams = req.headers;
 
-  if(!IsValidTime(headerParams['accessKey'] )){
+  if (!IsValidTime(headerParams.accesskey)) {
     return res.status(401).json({error: 'invalid access-key'}) 
   }
 
-  if(headerParams['perfil'] == undefined){
+  if (headerParams.perfil == undefined) {
     return res.status(401).json({error: 'perfil needed'}) 
   }
 
-  const query = `select nome, tpCliente,status, email,ddd,telefone  from tb_users WHERE IdUser =${Decrypt(headerParams['perfil'])}`;
+  const query = `select nome, tpCliente,status, email,ddd,telefone from tb_users WHERE IdUser = ?`;
+  const arrayValues = [Decrypt(headerParams.perfil)];
 
-  execquery(query, null, (dataRetrieved) =>  {
-    
+  execquery(query, arrayValues, (queryResponse) =>  {
     if(!queryResponse.result){
       
       queryResponse.con.end();
@@ -114,19 +110,17 @@ router.get('/registerdetails',(req,res) =>{
     }
 
       const dataResponse = Object.assign(queryResponse.result, {data: {
-                                                                      nome: dataRetrieved.result.data[0].nome,
-                                                                      perfil:dataRetrieved.result.data[0].tpCliente ,
-                                                                      situacao: dataRetrieved.result.data[0].status == 1 ? "ATIVO" : "INATIVO",
-                                                                      email: dataRetrieved.result.data[0].email,
-                                                                      ddd : dataRetrieved.result.data[0].ddd,
-                                                                      telefone: dataRetrieved.result.data[0].telefone}
+                                                                      nome: queryResponse.result.data[0].nome,
+                                                                      perfil:queryResponse.result.data[0].tpCliente ,
+                                                                      situacao: queryResponse.result.data[0].status == 1 ? "ATIVO" : "INATIVO",
+                                                                      email: queryResponse.result.data[0].email,
+                                                                      ddd : queryResponse.result.data[0].ddd,
+                                                                      telefone: queryResponse.result.data[0].telefone}
                                                                       
       });
       res.json(dataResponse)    
       
   });
-
-
 });
 
 router.post('/login', (req, res) => {

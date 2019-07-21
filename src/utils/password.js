@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt'),
 const PasswordCreate = (text, salt) => bcrypt.hashSync(text, salt);
 const PasswordCompare = (text, hash) => bcrypt.compareSync(`${text}`, `${hash}`);
 
-const Encrypt = function encrypt(text){
+const Encrypt = (text) => {
   
   var cipher = crypto.createCipher(algorithm,password)
   var crypted = cipher.update(text,'utf8','hex')
@@ -14,8 +14,7 @@ const Encrypt = function encrypt(text){
   return crypted;
 }
 
-const Decrypt = function decrypt(text){
-  
+const Decrypt = (text) => {
   var decipher = crypto.createDecipher(algorithm,password);
   var dec = decipher.update(text,'hex','utf8');
   dec += decipher.final('utf8');
