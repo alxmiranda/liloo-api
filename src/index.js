@@ -60,29 +60,27 @@ router.get('/validkey/:id',(req,res)=>{
 });
 
 router.post('/registerdetails',(req,res)=>{
-  const headerParams = [req.headers];
+  const headerParams = req.headers;
 
-  if(!IsValidTime(headerParams['accessKey'] )){
+  if(!IsValidTime(headerParams.accesskey )) {
     return res.status(401).json({error: 'invalid access-key'}) 
   }
 
-  if(headerParams['perfil'] == undefined){
+  if(headerParams.perfil == undefined) {
     return res.status(401).json({error: 'perfil needed'}) 
   }
 
-  const query = `update tb_users SET nome = ?,email=?,ddd=?,telefone=?,tpCliente =? WHERE IdUser =?`;
-  const arrayValues = [req.body.nome, req.body.email, req.body.ddd, req.body.telefone, req.body.perfil, Decrypt(headerParams['perfil']) ]
+  const query = `update tb_users SET nome = ?,email=?,ddd=?,telefone=? WHERE IdUser =?`;
+  const arrayValues = [req.body.nome, req.body.email, req.body.ddd, req.body.telefone, Decrypt(headerParams.perfil)]
   
-  execquery(query, arrayValues, (queryResponse) =>  {
-    if(queryResponse.result.codeResult === 0) {
-      const success = Object.assign(queryResponse.result, {data: null});
-      res.json(success);
-    } else {
-      const error = Object.assign(queryResponse.result, {codeRestult: 1, errorMsg: 'Dados atualizados com sucesso!', data: null});
-      res.json(error);
-    }
-    if(!queryResponse.result)
+  execquery(query, arrayValues, (queryResponse) => {
+    if(!queryResponse.result){
       queryResponse.con.end();
+      return res.status(404).json({error: 'Not record found'}) 
+    }
+    const success = Object.assign(queryResponse.result, {data: null});
+    res.json(success);
+    queryResponse.con.end();
   });
 });
 
