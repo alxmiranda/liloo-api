@@ -80,7 +80,6 @@ router.post('/registerdetails',(req,res)=>{
     }
     const success = Object.assign(queryResponse.result, {data: null});
     res.json(success);
-    queryResponse.con.end();
   });
 });
 
