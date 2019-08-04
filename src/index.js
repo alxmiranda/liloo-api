@@ -59,7 +59,7 @@ router.get('/validkey/:id',(req,res)=>{
 
 });
 
-router.post('registerdetails',(req,res)=>{
+router.post('/registerdetails',(req,res)=>{
   const headerParams = [req.headers];
 
   if(!IsValidTime(headerParams['accessKey'] )){
