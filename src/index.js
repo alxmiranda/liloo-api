@@ -61,18 +61,6 @@ router.get('/checkout/create/:id',(req,res)=>{
       phone_numbers: ['+5511999998888', '+5511888889999'],
       birthday: '1985-01-01',
     },
-    billing: {
-      name: 'Ciclano de Tal',
-      address: {
-        country: 'br',
-        state: 'SP',
-        city: 'São Paulo',
-        neighborhood: 'Fulanos bairro',
-        street: 'Rua dos fulanos',
-        street_number: '123',
-        zipcode: '05170060'
-      }
-    },
     items: [
       {
         id: '1', //codigo do meu produto/serviço
