@@ -5,7 +5,6 @@ import { execquery } from './queries';
 import { PasswordCreate, PasswordCompare, Encrypt, Decrypt } from './utils/password';
 import { SetTimeEncrypt, IsValidTime } from './utils/tempoAcesso'
 
-
 const port = process.env.PORT || 9002;
 
 const corsOptions = {
@@ -30,6 +29,65 @@ router.get('/clientes', cors(corsOptions), (req, res) => {
     console.log('>>>', queryResponse.result);
   } );
 });
+
+router.get('/checkout/initiate/:id',(req,res)=>{
+    //under construction (não remover)
+
+  //aqui serve para criarmos o carrinho
+});
+
+router.get('/checkout/create/:id',(req,res)=>{
+  //under construction (não remover)
+  // https://docs.pagar.me/docs/inserindo-o-checkout
+
+  let checkoutOptions = {
+    amount: 8000,
+    createToken: true,
+    postbackUrl: '',
+    paymentMethods: 'redit_card',
+    customerData: false,
+    customer: {
+      external_id: '#123456789', //codigo do cliente no meu sistema
+      name: 'Fulano',
+      type: 'individual',
+      country: 'br',
+      email: 'fulano@email.com',
+      documents: [
+        {
+          type: 'cpf',
+          number: '71404665560',
+        },
+      ],
+      phone_numbers: ['+5511999998888', '+5511888889999'],
+      birthday: '1985-01-01',
+    },
+    billing: {
+      name: 'Ciclano de Tal',
+      address: {
+        country: 'br',
+        state: 'SP',
+        city: 'São Paulo',
+        neighborhood: 'Fulanos bairro',
+        street: 'Rua dos fulanos',
+        street_number: '123',
+        zipcode: '05170060'
+      }
+    },
+    items: [
+      {
+        id: '1', //codigo do meu produto/serviço
+        title: 'Bola de futebol',
+        unit_price: 12000,
+        quantity: 1,
+        tangible: true
+      }
+    ]
+  };
+
+  return res.status(200).json(checkoutOptions);
+
+});
+
 
 router.get('/cliente/:id', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
