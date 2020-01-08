@@ -30,9 +30,10 @@ const registerDetails = (req, res) => {
     return res.status(401).json({error: 'perfil needed'}) 
   }
 
-  const query = `update tb_users SET nome = ?,email=?,ddd=?,telefone=? WHERE IdUser =?`;
-  const arrayValues = [req.body.nome, req.body.email, req.body.ddd, req.body.telefone, Decrypt(headerParams.perfil)]
-
+  const query = `update tb_users SET nome = ?,email=?,ddd=?,telefone=?,cpf=?,data_nascimento=? WHERE IdUser =?`;
+ 
+  const arrayValues = [req.body.nome, req.body.email, req.body.ddd, req.body.telefone,req.cpf,req.dataNascimento, Decrypt(headerParams.perfil)]
+  
   execquery(query, arrayValues, (queryResponse) => {
     if(!queryResponse.result){
       queryResponse.con.end();
