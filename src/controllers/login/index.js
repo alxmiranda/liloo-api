@@ -1,5 +1,6 @@
 import { PasswordCompare, Encrypt } from './../../utils/password';
 import { SetTimeEncrypt } from './../../utils/tempoAcesso';
+import { execquery } from '../../queries/';
 
 const login = (req, res) => {
   const query = 'select IDuser, nome,senha,tpCliente,status from tb_users WHERE email = ?';
